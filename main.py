@@ -19,30 +19,72 @@ def make_canvas():
 
 
 def draw_circle():
-    canvas = make_canvas()
-    canvas.create_oval(220, 140, 420, 340, width=2, fill='grey20', outline='green yellow')
+    try:
+        entry = int(entry_circle.get())
+        canvas = make_canvas()
+        x1 = x - entry/2
+        x2 = x + entry/2
+        y1 = y - entry/2
+        y2 = y + entry/2
+        canvas.create_oval(x1, y1, x2, y2, width=2, fill='grey20', outline='green yellow')
+        circle = Circle(entry)
+        messagebox.showinfo("Расчет", f'Площадь: {circle.area()}\nДлина окружности: {circle.perimetr()}')
+    except Exception as ex:
+        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
+        print(ex)
 
 
 def draw_square():
-    canvas = make_canvas()
-    val = int(entry_square.get())
-    x1 = x-val
-    x2 = x+val
-    y1 = y-val
-    y2 = y+val
-    canvas.create_polygon(x1, y1, x2, y1, x2, y2, x1, y2, width=2, fill='grey20', outline='green yellow')
-    square = Square(val)
-    messagebox.showinfo("Расчет", f"Площадь: {square.area()}\nПериметр: {square.perimetr()}")
+    try:
+        entry = int(entry_square.get())
+        canvas = make_canvas()
+        x1 = x - entry/2
+        x2 = x + entry/2
+        y1 = y - entry/2
+        y2 = y + entry/2
+        canvas.create_polygon(x1, y1, x2, y1, x2, y2, x1, y2, width=2, fill='grey20', outline='green yellow')
+        square = Square(entry)
+        messagebox.showinfo("Расчет", f'Площадь: {square.area()}\nПериметр: {square.perimetr()}')
+    except Exception as ex:
+        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
+        print(ex)
 
 
 def draw_rectangle():
-    canvas = make_canvas()
-    canvas.create_polygon(220, 200, 420, 200, 420, 280, 220, 280, width=2, fill='grey20', outline='green yellow')
+    try:
+        entry_1 = int(entry_rectangle_1.get())
+        entry_2 = int(entry_rectangle_2.get())
+        canvas = make_canvas()
+        x1 = x - entry_1/2
+        x2 = x + entry_1/2
+        y1 = y - entry_2/2
+        y2 = y + entry_2/2
+        canvas.create_polygon(x1, y1, x2, y1, x2, y2, x1, y2, width=2, fill='grey20', outline='green yellow')
+        rectangle = Rectangle(entry_1, entry_2)
+        messagebox.showinfo("Расчет", f'Площадь: {rectangle.area()}\nПериметр: {rectangle.perimetr()}')
+    except Exception as ex:
+        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
+        print(ex)
 
 
 def draw_triangle():
-    canvas = make_canvas()
-    canvas.create_polygon(320, 140, 220, 340, 420, 340, width=2, fill='grey20', outline='green yellow')
+    try:
+        entry_1 = int(entry_triangle_1.get())
+        entry_2 = int(entry_triangle_2.get())
+        entry_3 = int(entry_triangle_3.get())
+        canvas = make_canvas()
+        x1 = x - entry_1 / 2
+        x2 = x + entry_2 / 2
+        x3 = x + entry_3 / 2
+        y1 = y - entry_1 / 2
+        y2 = y + entry_2 / 2
+        y3 = y + entry_3 / 2
+        canvas.create_polygon(320, 140, 220, 340, 420, 340, width=2, fill='grey20', outline='green yellow')
+        rectangle = Rectangle(entry_1, entry_2)
+        messagebox.showinfo("Расчет", f'Площадь: {rectangle.area()}\nПериметр: {rectangle.perimetr()}')
+    except Exception as ex:
+        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
+        print(ex)
 
 
 def draw_trapeze():
@@ -93,8 +135,8 @@ Button(window, text="Круг", width=14, height=2, bg='grey30', fg='green yello
     .grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
 Label(window, text="Радиус круга", font=('Arial Bold', 8), bg='grey20', fg='green') \
     .grid(row=2, column=0, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=3, column=0, padx=5, sticky='nsew')
+entry_circle = Entry(window, bg='grey30', fg='green yellow')
+entry_circle.grid(row=3, column=0, padx=5, sticky='nsew')
 
 Button(window, text="Квадрат", width=14, height=2, bg='grey30', fg='green yellow', command=draw_square) \
     .grid(row=1, column=1, padx=5, pady=5, sticky='nsew')
@@ -107,12 +149,12 @@ Button(window, text="Прямоугольник", width=14, height=2, bg='grey30
     .grid(row=1, column=2, padx=5, pady=5, sticky='nsew')
 Label(window, text="Первая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
     .grid(row=2, column=2, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=3, column=2, padx=5, sticky='nsew')
+entry_rectangle_1 = Entry(window, bg='grey30', fg='green yellow')
+entry_rectangle_1.grid(row=3, column=2, padx=5, sticky='nsew')
 Label(window, text="Вторая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
     .grid(row=4, column=2, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=5, column=2, padx=5, sticky='nsew')
+entry_rectangle_2 = Entry(window, bg='grey30', fg='green yellow')
+entry_rectangle_2.grid(row=5, column=2, padx=5, sticky='nsew')
 
 Button(window, text="Треугольник", width=14, height=2, bg='grey30', fg='green yellow', command=draw_triangle) \
     .grid(row=1, column=3, padx=5, pady=5, sticky='nsew')
