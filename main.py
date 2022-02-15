@@ -1,226 +1,176 @@
 from shapes import *
 from tkinter import *
+from functools import partial
 from tkinter import messagebox
 
 window = Tk()
 window.title("Геометрический калькулятор")
 window.configure(bg='grey20')
 window.overrideredirect(True)
-x = 640
-y = 384
 
 
 def make_canvas():
     window = Tk()
     window.title("Холст")
-    canvas = Canvas(window, width=1280, height=768, bg='grey20')
+    canvas = Canvas(window, width=500, height=500, bg='grey')
     canvas.pack()
     return canvas
 
 
-def draw_circle():
+def draw_shape(shape_name, shape_entry):
     try:
-        entry = int(entry_circle.get())
+        entry = shape_entry.get().replace(' ', '').split(',')
+        entry = tuple(map(int, entry))
+        name = shape_name
+
+        if len(entry) == 1:
+            one_entry = {"Круг": Circle(*entry),
+                         "Квадрат": Square(*entry),
+                         "Сфера": Sphere(*entry),
+                         "Куб": Cube(*entry),
+                         }
+            figure = one_entry[name]
+
+        elif len(entry) == 2:
+            two_entry = {"Прямоугольник": Rectangle(*entry),
+                         "Ромб": Rhombus(*entry),
+                         "Цилиндр": Cylinder(*entry),
+                         "Конус": Cone(*entry),
+                         "Треугольник": Triangle(*entry)
+                         }
+            figure = two_entry[name]
+        elif len(entry) == 3:
+            three_entry = {"Параллелепипед": Parallelepiped(*entry),
+                           "Трапеция": Trapezoid(*entry),
+                           "Пирамида": Pyramid(*entry)
+                           }
+            figure = three_entry[name]
+
         canvas = make_canvas()
-        x1 = x - entry/2
-        x2 = x + entry/2
-        y1 = y - entry/2
-        y2 = y + entry/2
-        canvas.create_oval(x1, y1, x2, y2, width=2, fill='grey20', outline='green yellow')
-        circle = Circle(entry)
-        messagebox.showinfo("Расчет", f'Площадь: {circle.area()}\nДлина окружности: {circle.perimetr()}')
+        figure.draw_figure(canvas)
+
+        messagebox.showinfo("Расчет",
+                            f'Площадь: {figure.get_area()}\n'
+                            f'Периметр: {figure.get_perimeter()}\n'
+                            f'Объем: {figure.get_volume()}')
+
     except Exception as ex:
         messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
         print(ex)
-
-
-def draw_square():
-    try:
-        entry = int(entry_square.get())
-        canvas = make_canvas()
-        x1 = x - entry/2
-        x2 = x + entry/2
-        y1 = y - entry/2
-        y2 = y + entry/2
-        canvas.create_polygon(x1, y1, x2, y1, x2, y2, x1, y2, width=2, fill='grey20', outline='green yellow')
-        square = Square(entry)
-        messagebox.showinfo("Расчет", f'Площадь: {square.area()}\nПериметр: {square.perimetr()}')
-    except Exception as ex:
-        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
-        print(ex)
-
-
-def draw_rectangle():
-    try:
-        entry_1 = int(entry_rectangle_1.get())
-        entry_2 = int(entry_rectangle_2.get())
-        canvas = make_canvas()
-        x1 = x - entry_1/2
-        x2 = x + entry_1/2
-        y1 = y - entry_2/2
-        y2 = y + entry_2/2
-        canvas.create_polygon(x1, y1, x2, y1, x2, y2, x1, y2, width=2, fill='grey20', outline='green yellow')
-        rectangle = Rectangle(entry_1, entry_2)
-        messagebox.showinfo("Расчет", f'Площадь: {rectangle.area()}\nПериметр: {rectangle.perimetr()}')
-    except Exception as ex:
-        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
-        print(ex)
-
-
-def draw_triangle():
-    try:
-        entry_1 = int(entry_triangle_1.get())
-        entry_2 = int(entry_triangle_2.get())
-        entry_3 = int(entry_triangle_3.get())
-        canvas = make_canvas()
-        x1 = x - entry_1 / 2
-        x2 = x + entry_2 / 2
-        x3 = x + entry_3 / 2
-        y1 = y - entry_1 / 2
-        y2 = y + entry_2 / 2
-        y3 = y + entry_3 / 2
-        canvas.create_polygon(320, 140, 220, 340, 420, 340, width=2, fill='grey20', outline='green yellow')
-        rectangle = Rectangle(entry_1, entry_2)
-        messagebox.showinfo("Расчет", f'Площадь: {rectangle.area()}\nПериметр: {rectangle.perimetr()}')
-    except Exception as ex:
-        messagebox.showerror('Расчет', 'Необходимо ввести корректные данные!')
-        print(ex)
-
-
-def draw_trapeze():
-    canvas = make_canvas()
-    canvas.create_polygon(270, 200, 370, 200, 420, 280, 220, 280, width=2, fill='grey20', outline='green yellow')
-
-
-def draw_rhombus():
-    canvas = make_canvas()
-    canvas.create_polygon(320, 140, 370, 240, 320, 340, 270, 240, width=2, fill='grey20', outline='green yellow')
-
-
-def draw_sphere():
-    canvas = make_canvas()
-    pass
-
-
-def draw_cube():
-    canvas = make_canvas()
-    pass
-
-
-def draw_parallelepiped():
-    canvas = make_canvas()
-    pass
-
-
-def draw_pyramid():
-    canvas = make_canvas()
-    pass
-
-
-def draw_cylinder():
-    canvas = make_canvas()
-    pass
-
-
-def draw_cone():
-    canvas = make_canvas()
-    pass
 
 
 # Плоские фигуры
 Label(window, text="Плоские фигуры", font=('Arial Bold', 14), bg='grey20', fg='green yellow') \
     .grid(row=0, column=0, columnspan=6, pady=10, sticky='nsew')
+Label(window, text="Введите требуемые данные через запятую и нажмите на кнопку с именем фигуры",
+      font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=1, column=0, columnspan=6, sticky='nsew')
 
-Button(window, text="Круг", width=14, height=2, bg='grey30', fg='green yellow', command=draw_circle) \
-    .grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
-Label(window, text="Радиус круга", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=2, column=0, padx=5, sticky=W)
 entry_circle = Entry(window, bg='grey30', fg='green yellow')
-entry_circle.grid(row=3, column=0, padx=5, sticky='nsew')
+entry_circle.grid(row=4, column=0, padx=5, sticky='nsew')
+Button(window, text="Круг", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Круг', entry_circle)) \
+    .grid(row=2, column=0, padx=5, pady=5, sticky='nsew')
+Label(window, text="Радиус", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=3, column=0, padx=5, sticky=W)
 
-Button(window, text="Квадрат", width=14, height=2, bg='grey30', fg='green yellow', command=draw_square) \
-    .grid(row=1, column=1, padx=5, pady=5, sticky='nsew')
-Label(window, text="Сторона квадрата", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=2, column=1, padx=5, sticky=W)
 entry_square = Entry(window, bg='grey30', fg='green yellow')
-entry_square.grid(row=3, column=1, padx=5, sticky='nsew')
+entry_square.grid(row=4, column=1, padx=5, sticky='nsew')
+Button(window, text="Квадрат", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Квадрат', entry_square)) \
+    .grid(row=2, column=1, padx=5, pady=5, sticky='nsew')
+Label(window, text="Одна сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=3, column=1, padx=5, sticky=W)
 
-Button(window, text="Прямоугольник", width=14, height=2, bg='grey30', fg='green yellow', command=draw_rectangle) \
-    .grid(row=1, column=2, padx=5, pady=5, sticky='nsew')
-Label(window, text="Первая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=2, column=2, padx=5, sticky=W)
-entry_rectangle_1 = Entry(window, bg='grey30', fg='green yellow')
-entry_rectangle_1.grid(row=3, column=2, padx=5, sticky='nsew')
-Label(window, text="Вторая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=4, column=2, padx=5, sticky=W)
-entry_rectangle_2 = Entry(window, bg='grey30', fg='green yellow')
-entry_rectangle_2.grid(row=5, column=2, padx=5, sticky='nsew')
+entry_rectangle = Entry(window, bg='grey30', fg='green yellow')
+entry_rectangle.grid(row=4, column=2, padx=5, sticky='nsew')
+Button(window, text="Прямоугольник", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Прямоугольник', entry_rectangle)) \
+    .grid(row=2, column=2, padx=5, pady=5, sticky='nsew')
+Label(window, text="Две стороны", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=3, column=2, padx=5, sticky=W)
 
-Button(window, text="Треугольник", width=14, height=2, bg='grey30', fg='green yellow', command=draw_triangle) \
-    .grid(row=1, column=3, padx=5, pady=5, sticky='nsew')
-Label(window, text="Первая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=2, column=3, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=3, column=3, padx=5, sticky='nsew')
-Label(window, text="Вторая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=4, column=3, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=5, column=3, padx=5, sticky='nsew')
-Label(window, text="Основание", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=6, column=3, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=7, column=3, padx=5, sticky='nsew')
+entry_triangle = Entry(window, bg='grey30', fg='green yellow')
+entry_triangle.grid(row=4, column=3, padx=5, sticky='nsew')
+Button(window, text="Треугольник", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Треугольник', entry_triangle)) \
+    .grid(row=2, column=3, padx=5, pady=5, sticky='nsew')
+Label(window, text="Два катета", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=3, column=3, padx=5, sticky=W)
 
-Button(window, text="Трапеция", width=14, height=2, bg='grey30', fg='green yellow', command=draw_trapeze) \
-    .grid(row=1, column=4, padx=5, pady=5, sticky='nsew')
-Label(window, text="Первая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=2, column=4, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=3, column=4, padx=5, sticky='nsew')
-Label(window, text="Вторая сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=4, column=4, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=5, column=4, padx=5, sticky='nsew')
-Label(window, text="Первое основание", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=6, column=4, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=7, column=4, padx=5, sticky='nsew')
-Label(window, text="Второе основание", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=8, column=4, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=9, column=4, padx=5, sticky='nsew')
+entry_trapeze = Entry(window, bg='grey30', fg='green yellow')
+entry_trapeze.grid(row=4, column=4, padx=5, sticky='nsew')
+Button(window, text="Трапеция", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Трапеция', entry_trapeze)) \
+    .grid(row=2, column=4, padx=5, pady=5, sticky='nsew')
+Label(window, text="Два основания и высота", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=3, column=4, padx=5, sticky=W)
 
-Button(window, text="Ромб", width=14, height=2, bg='grey30', fg='green yellow', command=draw_rhombus) \
-    .grid(row=1, column=5, padx=5, pady=5, sticky='nsew')
-Label(window, text="Сторона ромба", font=('Arial Bold', 8), bg='grey20', fg='green') \
-    .grid(row=2, column=5, padx=5, sticky=W)
-Entry(window, bg='grey30', fg='green yellow') \
-    .grid(row=3, column=5, padx=5, sticky='nsew')
+entry_rhombus = Entry(window, bg='grey30', fg='green yellow')
+entry_rhombus.grid(row=4, column=5, padx=5, sticky='nsew')
+Button(window, text="Ромб", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Ромб', entry_rhombus)) \
+    .grid(row=2, column=5, padx=5, pady=5, sticky='nsew')
+Label(window, text="Две диагонали", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=3, column=5, padx=5, sticky=W)
 
 # Объемные фигуры
 Label(window, text="Объемные фигуры", font=('Arial Bold', 14), bg='grey20', fg='green yellow') \
-    .grid(row=10, column=0, columnspan=6, pady=10, sticky='nsew')
+    .grid(row=5, column=0, columnspan=6, pady=10, sticky='nsew')
+Label(window, text="Введите требуемые данные через запятую и нажмите на кнопку с именем фигуры",
+      font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=6, column=0, columnspan=6, sticky='nsew')
 
-Button(window, text="Сфера", width=14, height=2, bg='grey30', fg='green yellow', command=draw_sphere) \
-    .grid(row=11, column=0, padx=5, pady=5, sticky='nsew')
+entry_sphere = Entry(window, bg='grey30', fg='green yellow')
+entry_sphere.grid(row=9, column=0, padx=5, sticky='nsew')
+Button(window, text="Сфера", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Сфера', entry_sphere)) \
+    .grid(row=7, column=0, padx=5, pady=5, sticky='nsew')
+Label(window, text="Радиус", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=8, column=0, padx=5, sticky=W)
 
-Button(window, text="Куб", width=14, height=2, bg='grey30', fg='green yellow', command=draw_cube) \
-    .grid(row=11, column=1, padx=5, pady=5, sticky='nsew')
+entry_cube = Entry(window, bg='grey30', fg='green yellow')
+entry_cube.grid(row=9, column=1, padx=5, sticky='nsew')
+Button(window, text="Куб", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Куб', entry_cube)) \
+    .grid(row=7, column=1, padx=5, pady=5, sticky='nsew')
+Label(window, text="Одна сторона", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=8, column=1, padx=5, sticky=W)
 
-Button(window, text="Параллелепипед", width=14, height=2, bg='grey30', fg='green yellow', command=draw_parallelepiped) \
-    .grid(row=11, column=2, padx=5, pady=5, sticky='nsew')
+entry_parallelepiped = Entry(window, bg='grey30', fg='green yellow')
+entry_parallelepiped.grid(row=9, column=2, padx=5, sticky='nsew')
+Button(window, text="Параллелепипед", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Параллелепипед', entry_parallelepiped)) \
+    .grid(row=7, column=2, padx=5, pady=5, sticky='nsew')
+Label(window, text="Три стороны", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=8, column=2, padx=5, sticky=W)
 
-Button(window, text="Пирамида", width=14, height=2, bg='grey30', fg='green yellow', command=draw_pyramid) \
-    .grid(row=11, column=3, padx=5, pady=5, sticky='nsew')
+entry_pyramid = Entry(window, bg='grey30', fg='green yellow')
+entry_pyramid.grid(row=9, column=3, padx=5, sticky='nsew')
+Button(window, text="Пирамида", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Пирамида', entry_pyramid)) \
+    .grid(row=7, column=3, padx=5, pady=5, sticky='nsew')
+Label(window, text="Два основания и высота", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=8, column=3, padx=5, sticky=W)
 
-Button(window, text="Цилиндр", width=14, height=2, bg='grey30', fg='green yellow', command=draw_cylinder) \
-    .grid(row=11, column=4, padx=5, pady=5, sticky='nsew')
+entry_cylinder = Entry(window, bg='grey30', fg='green yellow')
+entry_cylinder.grid(row=9, column=4, padx=5, sticky='nsew')
+Button(window, text="Цилиндр", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Цилиндр', entry_cylinder)) \
+    .grid(row=7, column=4, padx=5, pady=5, sticky='nsew')
+Label(window, text="Радиус и высота", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=8, column=4, padx=5, sticky=W)
 
-Button(window, text="Конус", width=14, height=2, bg='grey30', fg='green yellow', command=draw_cone) \
-    .grid(row=11, column=5, padx=5, pady=5, sticky='nsew')
+entry_cone = Entry(window, bg='grey30', fg='green yellow')
+entry_cone.grid(row=9, column=5, padx=5, sticky='nsew')
+Button(window, text="Конус", width=14, height=2, bg='grey30', fg='green yellow',
+       command=partial(draw_shape, 'Конус', entry_cone)) \
+    .grid(row=7, column=5, padx=5, pady=5, sticky='nsew')
+Label(window, text="Радиус и высота", font=('Arial Bold', 8), bg='grey20', fg='green') \
+    .grid(row=8, column=5, padx=5, sticky=W)
 #
 Button(window, text="Exit", bg='grey20', fg='green yellow', command=exit) \
-    .grid(row=12, column=0, columnspan=6, padx=5, pady=5, sticky='nsew')
+    .grid(row=10, column=0, columnspan=6, padx=5, pady=5, sticky='nsew')
 
 if __name__ == '__main__':
     window.mainloop()
